@@ -508,10 +508,7 @@ class Woe(object):
             if self.__column_type[k] == 'number':
                 group = ['[' + x[1:] for x in group if x != 'default'] + ['default']
             woe  = [x for x in v.values()]
-            try:
-                tmp = pd.DataFrame({'var': [k] * len(v), 'group': group, 'woe': woe})
-            except:
-                print(group, woe)
+            tmp = pd.DataFrame({'var': [k] * len(v), 'group': group, 'woe': woe})
             tmp.set_index(['var', 'group'], inplace=True)
             res.append(tmp)
         return pd.concat(res)
@@ -520,7 +517,7 @@ class Woe(object):
         return self.__iv
     @property
     def iv_df(self):
-        return pd.DataFrame({'vars': list(self.__iv.keys()), 'iv': list(self.__iv.values())})
+        return pd.DataFrame({'vars': list(self.__iv.keys()), 'iv': list(self.__iv.values())}).sort_values(by='iv', ascending=False)
     @property
     def split_list(self):
         return self.__split_list
