@@ -221,7 +221,7 @@ class WoeSingleNumberic(object):
 
     def transform(self, col):
         """
-        trandform func
+        transform func
         :param col:
         :return: woe_val
         """
@@ -380,7 +380,7 @@ class WoeSingleObject(object):
 
     def transform(self, col):
         """
-        trandform func
+        transform func
         :param col:
         :return: woe_val
         """
