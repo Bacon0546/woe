@@ -295,7 +295,7 @@ class WoeSingleObject(object):
         :param y:
         :return: nan的col及对应y
         """
-        return [x for x in col if len(str(x)) == 0], [y[i] for i in range(len(col)) if len(str(col[i])) == 0]
+        return [x for x in col if len(str(x)) == 0 or str(x) == 'nan'], [y[i] for i in range(len(col)) if len(str(col[i])) == 0 or str(col[i]) == 'nan']
 
     def __filter_notnan(self, col, y):
         """
@@ -303,7 +303,7 @@ class WoeSingleObject(object):
         :param y:
         :return: 不为nan的col及对应y
         """
-        return [x for x in col if len(str(x)) > 0], [y[i] for i in range(len(col)) if len(str(col[i])) > 0]
+        return [x for x in col if (len(str(x)) > 0) and (str(x) != 'nan')], [y[i] for i in range(len(col)) if (len(str(col[i])) > 0) and (str(col[i]) != 'nan')]
 
     def __get_split_list(self, col, label):
         """
@@ -527,56 +527,3 @@ class Woe(object):
     @property
     def min_sample(self):
         return self.__min_sample
-
-
-if __name__ == "__main__":
-    df = pd.read_csv('./train_less_ori_combine_0728.csv', sep='\t')
-
-    #测试Woe
-    woe = Woe(min_sample_rate=0.03)
-    split_dict = {
-        'hui_score': [0.038, 0.073, 0.158, 0.3],
-        'dtscore_v2': [5, 10, 25],
-        #'id_province': [('北京市',), ('上海市',), ('山东省', '广东省')]
-        'id_province': [['重庆市'], ['上海市'], ['山东省', '广东省']]
-    } #手动设定分割点，可以不加
-    woe.fit(df[['hui_score', 'model_rank', 'dtscore_v2', 'id_province']], df.y.values, **split_dict)
-    #woe.fit(df[['hui_score', 'model_rank', 'dtscore_v2', 'id_province']], df.y)
-    print(woe.woe_map_dict)
-    print("=====")
-    print(woe.woe_map_df)
-    print("=====")
-    woe.woe_map_df.to_excel('./map_woe.xlsx', sheet_name='Sheet1')
-    print("iv:", woe.iv)
-    print("=========")
-    print(woe.iv_df)
-    a = woe.transform(df[['hui_score', 'model_rank', 'dtscore_v2', 'id_province']])
-    print(a.head())
-    a.to_csv('./data_new.csv')
-
-    # 测试Woe数值型单变量
-    woe_num = WoeSingleNumberic(min_sample_rate=0.05)
-    woe_num.fit(df.model_rank.values, df.y.values)
-    # woe.fit(df.hui_score.values, df.y.values, split_list=[0.038, 0.073, 0.158, 0.3])
-    print(woe_num.woe_map)
-    for v in woe_num.woe_map.values():
-        print(v)
-    print("iv:", woe_num.iv)
-    a = woe_num.transform(df.model_rank.values)
-    print(np.unique(a))
-    print(pd.Series(woe_num.woe_map))
-    print(len(a))
-    print(pd.Series(a).value_counts())
-
-    #测试字符型单变量
-    woe_obj = WoeSingleObject(min_sample_rate=0.03)
-    woe_obj.fit(df.card_nums.values, df.y.values)
-    print(woe_obj.woe_map)
-    for v in woe_obj.woe_map.values():
-        print(v)
-    print("iv:", woe_obj.iv)
-    a = woe_obj.transform(df.card_nums.values)
-    print(np.unique(a))
-    print(pd.Series(woe_obj.woe_map))
-    print(len(a))
-    print(pd.Series(a).value_counts())
