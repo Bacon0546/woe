@@ -517,7 +517,10 @@ class Woe(object):
         return self.__iv
     @property
     def iv_df(self):
-        return pd.DataFrame({'vars': list(self.__iv.keys()), 'iv': list(self.__iv.values())}).sort_values(by='iv', ascending=False)
+        return return pd.DataFrame((OrderedDict({
+            'vars': list(self.__iv.keys()),
+            'iv': list(self.__iv.values())
+        }))).sort_values(by='iv', ascending=False)
     @property
     def split_list(self):
         return self.__split_list
