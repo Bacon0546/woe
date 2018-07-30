@@ -517,7 +517,7 @@ class Woe(object):
         return self.__iv
     @property
     def iv_df(self):
-        return return pd.DataFrame((OrderedDict({
+        return pd.DataFrame((OrderedDict({
             'vars': list(self.__iv.keys()),
             'iv': list(self.__iv.values())
         }))).sort_values(by='iv', ascending=False)
