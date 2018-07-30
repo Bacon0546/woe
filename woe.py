@@ -212,6 +212,12 @@ class WoeSingleNumberic(object):
         :param split_list: 如果给定，则按照这个计算，否则，自动划分
         :return:
         """
+		self.__min_sample = 1
+        self.__split_list = [] # 分割点list
+        self.__map_woe = OrderedDict() # woe映射字典，左闭右开区间
+        self.__split_group = []
+        self.__iv = 0
+		
         col = np.array(col)
         label = np.array(label)
         self.__check_label_binary(label)
@@ -371,6 +377,12 @@ class WoeSingleObject(object):
         :param split_list:
         :return:
         """
+		self.__min_sample = 1
+        self.__split_list = []
+        self.__var_lst_detail = []
+        self.__map_woe = OrderedDict()  # woe映射字典，左闭右开区间
+        self.__iv = 0
+		
         col = np.array(col)
         label = np.array(label)
         self.__check_label_binary(label)
@@ -469,6 +481,13 @@ class Woe(object):
         :param split_dict: 手动确定分割点，dict类型，如{''col1': [0,1,2,3], 'col2': [['A'], ['B'], ['c', 'd', 'e']}
         :return: None
         """
+		self.__min_sample = 1
+        self.__split_list = {}
+        self.__map_woe = {}  # woe映射字典，左闭右开区间
+        self.__iv = {}
+        self.__woe = {}
+        self.__column_type = {}
+		
         label = np.array(label)
         self.__check_label_binary(label)
         self.__min_sample = int(len(df) * self.__min_sample_rate)
