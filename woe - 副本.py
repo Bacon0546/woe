@@ -53,9 +53,7 @@ class WoeSingleNumberic(object):
         :param y:
         :return: nan的col及对应y
         """
-        idx = np.where(np.isnan(col))
-        return col[idx], y[idx]
-        # return [x for x in col if np.isnan(x)], [y[i] for i in range(len(col)) if np.isnan(col[i])]
+        return [x for x in col if np.isnan(x)], [y[i] for i in range(len(col)) if np.isnan(col[i])]
 
     def __filter_notnan(self, col, y):
         """
@@ -63,9 +61,7 @@ class WoeSingleNumberic(object):
         :param y:
         :return: 不为nan的col及对应y
         """
-        idx = np.where(~np.isnan(col))
-        return col[idx], y[idx]
-        # return [x for x in col if ~np.isnan(x)], [y[i] for i in range(len(col)) if ~np.isnan(col[i])]
+        return [x for x in col if ~np.isnan(x)], [y[i] for i in range(len(col)) if ~np.isnan(col[i])]
 
     def __get_split_points(self, col):
         """
@@ -79,9 +75,7 @@ class WoeSingleNumberic(object):
         var_lst = np.unique(col)
         var_lst.sort()
         var_split_lst = [(var_lst[i] + var_lst[i+1]) / 2 for i in range(len(var_lst) - 1)]
-        if len(var_split_lst) < 1 / self.__min_sample_rate:
-            return var_split_lst
-        step = (var_lst[int(len(var_lst) * 0.75)] - var_lst[int(len(var_lst) * 0.25)]) / 50
+        step = (var_lst[int(len(var_lst) * 0.75)] - var_lst[int(len(var_lst) * 0.25)]) / 100
         left_p = var_lst[0]
         for p in var_split_lst:
             if p - left_p < step:
@@ -109,12 +103,8 @@ class WoeSingleNumberic(object):
         :return: 切分的数据集
         """
         if lr_flag == 'left':
-            idx = np.where(col <= split_point )
-            return col[idx], label[idx]
-            # return [x for x in col if x <= split_point], [label[i] for i in range(len(col)) if col[i] < split_point]
-        idx = np.where(col > split_point)
-        return col[idx], label[idx]
-        # return [x for x in col if x > split_point], [label[i] for i in range(len(col)) if col[i] >= split_point]
+            return [x for x in col if x <= split_point], [label[i] for i in range(len(col)) if col[i] < split_point]
+        return [x for x in col if x > split_point], [label[i] for i in range(len(col)) if col[i] >= split_point]
 
     def __get_best_split_point(self, col, y, min_sample):
         """
@@ -237,9 +227,8 @@ class WoeSingleNumberic(object):
         label = np.array(label)
         self.__check_label_binary(label)
         if split_list is None or ( not isinstance(split_list, list) ) or len(split_list) == 0:
-            notnan_col, notnan_label = self.__filter_notnan(col, label)
             self.__min_sample = int(len(col) * self.__min_sample_rate)
-            self.__get_best_split_list(notnan_col, notnan_label)
+            self.__get_best_split_list(col, label)
         else:
             self.__split_list = split_list
             self.__split_list.sort(reverse=False)
