@@ -355,8 +355,11 @@ class WoeSingleObject(object):
                     self.__var_lst_detail.append(tmp)
                     tmp = [[], 0]
         if tmp[1] > 0 and tmp[1] < self.__min_sample:
-            self.__var_lst_detail[0][0].append(tmp[0][0])
-            self.__var_lst_detail[0][1] += tmp[1]
+            if self.__var_lst_detail is None or len(self.__var_lst_detail) == 0:
+                self.__var_lst_detail.append(tmp)
+            else:
+                self.__var_lst_detail[0][0].append(tmp[0][0])
+                self.__var_lst_detail[0][1] += tmp[1]
         self.__split_list = [tuple(x[0]) for x in self.__var_lst_detail]
 
     def __cal_woe(self, label, bad_good_rate_all):
@@ -562,3 +565,31 @@ class Woe(object):
     @property
     def min_sample(self):
         return self.__min_sample
+
+
+
+if __name__ == "__main__":
+    df = pd.read_csv('./old_data.csv', sep='\t')
+
+    #测试Woe
+    woe = Woe()
+    woe2 = WoeSingleNumberic()
+    # split_dict = {
+    #     'hui_score': [0.038, 0.073, 0.158, 0.3],
+    #     'dtscore_v2': [5, 10, 25],
+    #     #'id_province': [('北京市',), ('上海市',), ('山东省', '广东省')]
+    #     'id_province': [['重庆市'], ['上海市'], ['山东省', '广东省']]
+    # } #手动设定分割点，可以不加
+    from datetime import datetime
+    t1 = datetime.now()
+    # woe.fit(df[['v15']], df.y)
+    woe.fit(df.drop(columns=['OrderId', 'y']), df.y)
+    t2 = datetime.now()
+    print("delta t", t2 - t1)
+    print(woe.woe_map_dict)
+    print("=====")
+
+    print("iv:", woe.iv)
+    print("=========")
+    print(woe.iv)
+
